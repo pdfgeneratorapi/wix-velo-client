@@ -1,0 +1,226 @@
+import wixData from 'wix-data';
+
+/**
+ * User Wix Data to fetch products from database
+ */
+export async function getStoreProducts() {
+  return wixData.query("Stores/Products").find().then((data) => {
+    return Promise.resolve(data.items.map((product) => {
+      product.mainMedia = getFullImageURL(product.mainMedia);
+      return product;
+    }));
+  });
+}
+
+/**
+ * Converts wix:image to public static URL
+ */
+function getFullImageURL(imageSRC) {
+  let strReturnImage = "";
+  if (imageSRC.startsWith("wix:image:")) {
+    let wixImageURL = "";
+    wixImageURL = "https://static.wixstatic.com/media/";
+    let wixLocalURL = "";
+    wixLocalURL = imageSRC.replace('wix:image://v1/', '');
+    wixLocalURL = wixLocalURL.substr(0, wixLocalURL.lastIndexOf('/'));
+    strReturnImage = wixImageURL + wixLocalURL;
+  } else {
+    strReturnImage = imageSRC;
+  }
+  return strReturnImage;
+}
+
+/**
+ * Returns JS object which will be sent to PDF Generator as data
+ */
+export async function getDemoData() {
+  return {
+    "AutoDocNumber": 1522685,
+    "CustomerRef": "8",
+    "CustomerName": "Sasha Tillou",
+    "CustomerMemo": "Thank you for your business and have a great day!",
+    "sales_data": [{
+      "item": "January",
+      "quantity": 1,
+      "sale_price": 8160,
+      "date": "2019-01-01"
+    }, {
+      "item": "February",
+      "quantity": 2,
+      "sale_price": 12500,
+      "date": "2018-12-21"
+    }, {
+      "item": "March",
+      "quantity": 5,
+      "sale_price": 10800,
+      "date": "2019-01-06"
+    }, {
+      "item": "April",
+      "quantity": 2,
+      "sale_price": 13160,
+      "date": "2019-01-02"
+    }],
+    "line_items": [{
+      "name": "January",
+      "average_price": "4,080.00",
+      "total_price": "8,160.00",
+      "items": [{
+        "identifier": "Week 1",
+        "sold": "10",
+        "pre-sold": "5",
+        "completed": "3"
+      }, {
+        "identifier": "Week 2",
+        "sold": "12",
+        "pre-sold": "10",
+        "completed": "5"
+      }, {
+        "identifier": "Week 3",
+        "sold": "8",
+        "pre-sold": "1",
+        "completed": "15"
+      }, {
+        "identifier": "Week 4",
+        "sold": "7",
+        "pre-sold": "8",
+        "completed": "10"
+      }],
+      "quantity": 3
+    }, {
+      "name": "February",
+      "average_price": "6,710.00",
+      "total_price": "12,500.00",
+      "items": [{
+        "identifier": "Week 1",
+        "sold": "10",
+        "pre-sold": "1",
+        "completed": "14"
+      }, {
+        "identifier": "Week 2",
+        "sold": "14",
+        "pre-sold": "14",
+        "completed": "13"
+      }, {
+        "identifier": "Week 3",
+        "sold": "17",
+        "pre-sold": "8",
+        "completed": "10"
+      }, {
+        "identifier": "Week 4",
+        "sold": "14",
+        "pre-sold": "12",
+        "completed": "10"
+      }],
+      "quantity": 3
+    }, {
+      "name": "March",
+      "average_price": "4,080.00",
+      "total_price": "10,800.00",
+      "items": [{
+        "identifier": "Week 1",
+        "sold": "11",
+        "pre-sold": "10",
+        "completed": "5"
+      }, {
+        "identifier": "Week 2",
+        "sold": "14",
+        "pre-sold": "11",
+        "completed": "15"
+      }, {
+        "identifier": "Week 3",
+        "sold": "8",
+        "pre-sold": "1",
+        "completed": "8"
+      }, {
+        "identifier": "Week 4",
+        "sold": "14",
+        "pre-sold": "13",
+        "completed": "5"
+      }],
+      "quantity": 3
+    }, {
+      "name": "April",
+      "average_price": "4,080.00",
+      "total_price": "13,160.00",
+      "items": [{
+        "identifier": "Week 1",
+        "sold": "2",
+        "pre-sold": "10",
+        "completed": "4"
+      }, {
+        "identifier": "Week 2",
+        "sold": "12",
+        "pre-sold": "10",
+        "completed": "5"
+      }, {
+        "identifier": "Week 3",
+        "sold": "4",
+        "pre-sold": "11",
+        "completed": "15"
+      }, {
+        "identifier": "Week 4",
+        "sold": "11",
+        "pre-sold": "10",
+        "completed": "7"
+      }],
+      "quantity": 3
+    }],
+    "BillAddr": {
+      "Id": "94",
+      "Line1": "Sasha Tillou\nFreeman Sporting Goods\n370 Easy St.\nMiddlefield, CA 94482"
+    },
+    "ShipAddr": {
+      "Id": "8",
+      "Line1": "370 Easy St.",
+      "City": "Middlefield",
+      "CountrySubDivisionCode": "CA",
+      "PostalCode": "94482"
+    },
+    "SalesTermRef": "3",
+    "DueDate": "2020-03-09",
+    "TotalAmt": "477.50",
+    "ApplyTaxAfterDiscount": "false",
+    "PrintStatus": "NeedToPrint",
+    "EmailStatus": "NotSet",
+    "BillEmail": {
+      "Address": "Sporting_goods@intuit.com",
+    },
+    "ARAccountRef": null,
+    "Balance": "477.50",
+    "DocNumber": "1036",
+    "TxnDate": "2015-02-07",
+    "CustomField": {
+      "DefinitionId": "1",
+      "Name": "Crew #",
+      "Type": "StringType",
+      "StringValue": "105"
+    },
+    "CompanyInfo": {
+      "CompanyName": "My Company Name",
+      "LegalName": "My Company Name",
+      "CompanyAddr": {
+        "Id": "1",
+        "Line1": "123 Sierra Way",
+        "City": "San Pablo",
+        "CountrySubDivisionCode": "CA",
+        "PostalCode": "87999"
+      },
+      "CustomerCommunicationAddr": {
+        "Id": "1",
+        "Line1": "123 Sierra Way",
+        "City": "San Pablo",
+        "Country": null,
+        "CountryCode": null,
+        "CountrySubDivisionCode": "CA",
+        "PostalCode": "87999"
+      },
+      "LegalAddr": {
+        "Id": "1",
+        "Line1": "123 Sierra Way",
+        "City": "San Pablo",
+        "CountrySubDivisionCode": "CA",
+        "PostalCode": "87999"
+      }
+    }
+  };
+}
