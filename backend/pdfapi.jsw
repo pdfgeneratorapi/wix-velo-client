@@ -37,7 +37,8 @@ export async function generatePDFBinary(workspaceIdentifier, templateId, mergeDa
  * @return {Promise<unknown>}
  */
 export async function generatePDF(workspaceIdentifier, templateId, mergeData, mergeOptions) {
-  const client = await createClient(workspaceIdentifier);
+  const clientObject = await createClient(workspaceIdentifier);
+  const client = new clientObject.DocumentsApi();
 
   return new Promise((resolve, reject) => {
     client.mergeTemplate(templateId, mergeData, mergeOptions, (error, data, response) => {
@@ -59,7 +60,8 @@ export async function generatePDF(workspaceIdentifier, templateId, mergeData, me
  * @return {Promise<unknown>}
  */
 export async function getEditorUrl(workspaceIdentifier, templateId, previewData) {
-  const client = await createClient(workspaceIdentifier);
+  const clientObject = await createClient(workspaceIdentifier);
+  const client = new clientObject.TemplatesApi();
 
   return new Promise((resolve, reject) => {
     client.getEditorUrl(templateId, previewData, null, (error, data, response) => {
@@ -79,7 +81,8 @@ export async function getEditorUrl(workspaceIdentifier, templateId, previewData)
  * @return {Promise<unknown>}
  */
 export async function getTemplates(workspaceIdentifier) {
-  const client = await createClient(workspaceIdentifier);
+  const clientObject = await createClient(workspaceIdentifier);
+  const client = new clientObject.TemplatesApi();
 
   return new Promise((resolve, reject) => {
     client.getTemplates((error, data, response) => {
@@ -95,14 +98,14 @@ export async function getTemplates(workspaceIdentifier) {
 /**
  * Creates API client
  * @param {String} workspaceIdentifier
- * @return {Promise<PDFGeneratorAPI.TemplatesApi>}
+ * @return {Promise<PDFGeneratorAPI>}
  */
 async function createClient(workspaceIdentifier) {
   const defaultClient = PDFGeneratorAPI.ApiClient.instance;
   let JSONWebTokenAuth = defaultClient.authentications['JSONWebTokenAuth'];
 
   JSONWebTokenAuth.accessToken = await createJSONWebToken(workspaceIdentifier);
-  return new PDFGeneratorAPI.TemplatesApi();
+  return new PDFGeneratorAPI;
 }
 
 /**
