@@ -4,27 +4,16 @@ import { getEditorUrl, getTemplates } from 'backend/pdfapi.jsw';
  * Fetches templates list from PDF API and updates select options
  *
  * @param {String} workspaceIdentifier
- * @param {Boolean} showDefault
- * @param {Boolean} showPrivate
  * @return {Promise<[]>}
  */
-export async function getTemplateSelectOptions  (workspaceIdentifier, showDefault, showPrivate) {
-  if (typeof showDefault === "undefined") {
-    showDefault = false;
-  }
-  if (typeof showPrivate === "undefined") {
-    showPrivate = true;
-  }
-
-  return getTemplates(workspaceIdentifier).then((data) => {
+export async function getTemplateSelectOptions  (workspaceIdentifier, options) {
+  return getTemplates(workspaceIdentifier, options).then((data) => {
     let options = [];
     (data.response || []).forEach((template) => {
-      if (template.owner && showPrivate || !template.owner && showDefault) {
-        options.push({
-          value: template.id.toString(),
-          label: template.name + (!template.owner ? " (Default)" : " (Private)")
-        });
-      }
+      options.push({
+        value: template.id.toString(),
+        label: template.name + (!template.owner ? " (Default)" : " (Private)")
+      });
     });
     return Promise.resolve(options);
   });

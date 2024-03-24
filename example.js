@@ -2,7 +2,7 @@ import { updateOpenEditorButton, getTemplateSelectOptions } from 'public/pdfapi.
 import { generatePDFUrl } from 'backend/pdfapi.jsw';
 import { getDemoData, getStoreProducts } from 'backend/datasource.jsw';
 
-const workspaceIdentifier = "demo.example@actualreports.com";
+const workspaceIdentifier = "demo.wix@actualreports.com";
 let templateId = 226340;
 let exampleData = {
   demo: null,
@@ -55,15 +55,14 @@ $w.onReady(function () {
   /**
    * Load templates and set default value once templates are loaded
    */
-  getTemplateSelectOptions(workspaceIdentifier, true, false).then((options) => {
+  getTemplateSelectOptions(workspaceIdentifier, {"access": "organization", "per_page": 50}).then((options) => {
     $w("#templates").options = options;
     $w("#templates").value = templateId;
+    /**
+     * Initialize "Open editor" button
+     */
+    updateOpenEditorButton("#openeditor", workspaceIdentifier, templateId, getExampleData());
   });
-
-  /**
-   * Initalize "Open editor" button
-   */
-  updateOpenEditorButton("#openeditor", workspaceIdentifier, templateId, getExampleData());
 
   /**
    * Update active template id when a new template is selected from the dropdown

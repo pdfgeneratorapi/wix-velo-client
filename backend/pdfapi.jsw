@@ -39,9 +39,18 @@ export async function generatePDFBinary(workspaceIdentifier, templateId, mergeDa
 export async function generatePDF(workspaceIdentifier, templateId, mergeData, mergeOptions) {
   const clientObject = await createClient(workspaceIdentifier);
   const client = new clientObject.DocumentsApi();
+  const request = PDFGeneratorAPI.GenerateDocumentRequest.constructFromObject({
+    template: {
+      id: templateId,
+      data: mergeData
+    },
+    format: mergeOptions.format || 'pdf',
+    output: mergeOptions.output || 'base64',
+    name: mergeOptions.name
+  });
 
   return new Promise((resolve, reject) => {
-    client.mergeTemplate(templateId, mergeData, mergeOptions, (error, data, response) => {
+    client.generateDocument(request, (error, data, response) => {
       if (error) {
         reject(error);
       } else {
@@ -62,9 +71,12 @@ export async function generatePDF(workspaceIdentifier, templateId, mergeData, me
 export async function getEditorUrl(workspaceIdentifier, templateId, previewData) {
   const clientObject = await createClient(workspaceIdentifier);
   const client = new clientObject.TemplatesApi();
+  const request = PDFGeneratorAPI.OpenEditorRequest.constructFromObject({
+    data: previewData
+  });
 
   return new Promise((resolve, reject) => {
-    client.getEditorUrl(templateId, previewData, null, (error, data, response) => {
+    client.openEditor(templateId, request, (error, data, response) => {
       if (error) {
         reject(error);
       } else {
@@ -80,12 +92,19 @@ export async function getEditorUrl(workspaceIdentifier, templateId, previewData)
  * @param {String} workspaceIdentifier
  * @return {Promise<unknown>}
  */
-export async function getTemplates(workspaceIdentifier) {
+export async function getTemplates(workspaceIdentifier, options) {
   const clientObject = await createClient(workspaceIdentifier);
   const client = new clientObject.TemplatesApi();
+  const requestOptions = {
+    "per_page": options?.per_page || 50,
+    "page": options?.page || 1,
+    "access": options?.access,
+    "name": options?.name,
+    "tags": options?.tags
+  };
 
   return new Promise((resolve, reject) => {
-    client.getTemplates((error, data, response) => {
+    client.getTemplates(requestOptions, (error, data, response) => {
       if (error) {
         reject(error);
       } else {
@@ -120,7 +139,8 @@ async function createJSONWebToken(workspaceIdentifier) {
 
   return jwt.sign({
     "iss": apiKey,
-    "sub": workspaceIdentifier
+    "sub": workspaceIdentifier,
+    "partner_id": "wix"
   }, apiSecret, {
     expiresIn: 30
   });
